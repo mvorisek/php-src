@@ -44,15 +44,21 @@ jobs:
         include: ${{ fromJson(needs.GENERATE_MATRIX.outputs.asan-matrix) }}
     name: "${{ matrix.branch.name }}_LINUX_X64${{ matrix.name }}_${{ matrix.debug && 'DEBUG' || 'RELEASE' }}_${{ matrix.zts && 'ZTS' || 'NTS' }}"
     runs-on: ubuntu-20.04
+    services:
+      mssql:
+        image: mcr.microsoft.com/mssql/server:2019-latest
+        env:
+          ACCEPT_EULA: Y
+          SA_PASSWORD: '<YourStrong@Passw0rd>'
+      oracle:
+        image: gvenzl/oracle-xe:21-slim-faststart
+        env:
+          ORACLE_PASSWORD: pass
     steps:
       - name: git checkout
         uses: actions/checkout@v2
         with:
           ref: ${{ matrix.branch.ref }}
-      - name: Create MSSQL container
-        uses: ./.github/actions/setup-mssql
-      - name: Create Oracle container
-        uses: ./.github/actions/setup-oracle
       - name: apt
         uses: ./.github/actions/apt-x64
       - name: ./configure
@@ -168,13 +174,19 @@ jobs:
         uses: ./.github/actions/verify-generated-files
   COVERAGE_DEBUG_NTS:
     runs-on: ubuntu-20.04
+    services:
+      mssql:
+        image: mcr.microsoft.com/mssql/server:2019-latest
+        env:
+          ACCEPT_EULA: Y
+          SA_PASSWORD: '<YourStrong@Passw0rd>'
+      oracle:
+        image: gvenzl/oracle-xe:21-slim-faststart
+        env:
+          ORACLE_PASSWORD: pass
     steps:
       - name: git checkout
         uses: actions/checkout@v2
-      - name: Create MSSQL container
-        uses: ./.github/actions/setup-mssql
-      - name: Create Oracle container
-        uses: ./.github/actions/setup-oracle
       - name: apt
         uses: ./.github/actions/apt-x64
       - name: Install gcovr
