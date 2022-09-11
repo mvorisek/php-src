@@ -12,6 +12,9 @@ runs:
         # TODO docker cannot be used here docker exec sql1 /opt/mssql-tools/bin/sqlcmd -S 127.0.0.1 -U SA -P "<YourStrong@Passw0rd>" -Q "create login pdo_test with password='password', check_policy=off; create user pdo_test for login pdo_test; grant alter, control to pdo_test;"
         locale-gen de_DE
 
+        # fix slapd restarting
+        # https://stackoverflow.com/questions/30671693/within-a-docker-image-slapd-stop-succeeds-but-slapd-is-still-running
+        sed -i 's/--exec $SLAPD 2/--name slapd 2/' /etc/init.d/slapd
         ./.github/scripts/setup-slapd.sh
 
         cp ext/snmp/tests/snmpd.conf /etc/snmp
