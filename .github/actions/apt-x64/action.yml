@@ -18,6 +18,7 @@ runs:
           ldap-utils \
           openssl \
           slapd \
+          mysql-client \
           language-pack-de \
           libgmp-dev \
           libicu-dev \
