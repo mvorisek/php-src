@@ -15,6 +15,7 @@ runs:
           ldap-utils \
           openssl \
           unzip \
+          bzip2 \
           slapd \
           language-pack-de \
           libgmp-dev \
