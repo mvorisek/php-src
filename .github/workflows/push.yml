@@ -32,6 +32,8 @@ jobs:
             zts: true
     name: "LINUX_X64_${{ matrix.debug && 'DEBUG' || 'RELEASE' }}_${{ matrix.zts && 'ZTS' || 'NTS' }}"
     runs-on: ubuntu-20.04
+    container:
+      image: ubuntu:focal
     services:
       mssql:
         image: mcr.microsoft.com/mssql/server:2019-latest
