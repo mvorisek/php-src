@@ -15,7 +15,6 @@ runs:
           ldap-utils \
           openssl \
           unzip \
-          bzip2 \
           slapd \
           language-pack-de \
           libgmp-dev \
@@ -27,6 +26,7 @@ runs:
           libsasl2-dev \
           libxpm-dev \
           libzip-dev \
+          libbz2-dev \
           libsqlite3-dev \
           libwebp-dev \
           libonig-dev \
