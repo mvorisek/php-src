@@ -9,12 +9,14 @@ runs:
         export DEBIAN_FRONTEND=noninteractive
         apt-get update -y
         apt-get install -y \
+          build-essential \
+          autoconf \
+          unzip \
           bison \
           re2c \
           locales \
           ldap-utils \
           openssl \
-          unzip \
           slapd \
           language-pack-de \
           libgmp-dev \
