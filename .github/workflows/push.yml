@@ -10,11 +10,7 @@ on:
       - CONTRIBUTING.md
       - CODING_STANDARDS.md
     branches:
-      - PHP-7.4
-      - PHP-8.0
-      - PHP-8.1
-      - PHP-8.2
-      - master
+      - '**'
   pull_request:
     branches:
       - '**'
@@ -35,6 +31,15 @@ jobs:
     container:
       image: ubuntu:focal
     services:
+      mysql:
+        image: mysql:8
+        options: -e MYSQL_ROOT_PASSWORD=root -e MYSQL_DATABASE=test --entrypoint sh mysql:8 -c "exec docker-entrypoint.sh mysqld --default-authentication-plugin=mysql_native_password"
+      postgres:
+        image: postgres:12-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: test
       mssql:
         image: mcr.microsoft.com/mssql/server:2019-latest
         env:
