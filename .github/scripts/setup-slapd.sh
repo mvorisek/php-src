@@ -44,6 +44,8 @@ DBDN=`ldapsearch -Q -LLL -Y EXTERNAL -H ldapi:/// -b cn=config '(&(olcRootDN=*)(
 
 ldapadd -Q -Y EXTERNAL -H ldapi:/// -f /etc/ldap/schema/ppolicy.ldif
 
+ps aux
+
 service slapd restart
 
 ldapmodify -Q -Y EXTERNAL -H ldapi:/// << EOF
