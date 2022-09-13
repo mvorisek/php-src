@@ -6,8 +6,11 @@ runs:
       run: |
         set -x
 
-        sudo service slapd start
+        service slapd start
 
-        sudo locale-gen de_DE
+        locale-gen de_DE
 
-        ./.github/scripts/setup-slapd.sh &>/dev/null
+        ps aux
+        service slapd restart
+
+        ./.github/scripts/setup-slapd.sh
