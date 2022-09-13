@@ -10,7 +10,12 @@ runs:
 
         locale-gen de_DE
 
+        # fix slapd restarting
+        # https://stackoverflow.com/questions/30671693/within-a-docker-image-slapd-stop-succeeds-but-slapd-is-still-running
+        sed -i 's/--exec $SLAPD 2/--name slapd 2/' /etc/init.d/slapd
+
         ps aux
         service slapd restart
+        ps aux
 
         ./.github/scripts/setup-slapd.sh

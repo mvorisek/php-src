@@ -40,8 +40,6 @@ runs:
           libargon2-0-dev \
           libmm-dev \
           libsnmp-dev \
-          postgresql \
-          postgresql-contrib \
           snmpd \
           snmp-mibs-downloader \
           freetds-dev \
