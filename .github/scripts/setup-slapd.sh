@@ -2,7 +2,7 @@
 set -ev
 
 # Create TLS certificate
-mkdir -p /etc/ldap/ssl
+sudo mkdir -p /etc/ldap/ssl
 
 alt_names() {
   (
@@ -20,35 +20,33 @@ alt_names() {
   ) | paste -d, -s
 }
 
-openssl req -newkey rsa:4096 -x509 -nodes -days 3650 \
+sudo openssl req -newkey rsa:4096 -x509 -nodes -days 3650 \
   -out /etc/ldap/ssl/server.crt -keyout /etc/ldap/ssl/server.key \
   -subj "/C=US/ST=Arizona/L=Localhost/O=localhost/CN=localhost" \
   -addext "subjectAltName = `alt_names`"
 
-chown -R openldap:openldap /etc/ldap/ssl
+sudo chown -R openldap:openldap /etc/ldap/ssl
 
 # Display the TLS certificate (should be world readable)
 openssl x509 -noout -text -in /etc/ldap/ssl/server.crt
 
 # Point to the certificate generated
 if ! grep -q 'TLS_CACERT \/etc\/ldap\/ssl\/server.crt' /etc/ldap/ldap.conf; then
-  sed -e 's|^\s*TLS_CACERT|# TLS_CACERT|' -i /etc/ldap/ldap.conf
-  echo 'TLS_CACERT /etc/ldap/ssl/server.crt' | tee -a /etc/ldap/ldap.conf
+  sudo sed -e 's|^\s*TLS_CACERT|# TLS_CACERT|' -i /etc/ldap/ldap.conf
+  echo 'TLS_CACERT /etc/ldap/ssl/server.crt' | sudo tee -a /etc/ldap/ldap.conf
 fi
 
 # Configure LDAP protocols to serve.
-sed -e 's|^\s*SLAPD_SERVICES\s*=.*$|SLAPD_SERVICES="ldap:/// ldaps:/// ldapi:///"|' -i /etc/default/slapd
+sudo sed -e 's|^\s*SLAPD_SERVICES\s*=.*$|SLAPD_SERVICES="ldap:/// ldaps:/// ldapi:///"|' -i /etc/default/slapd
 
 # Configure LDAP database.
-DBDN=`ldapsearch -Q -LLL -Y EXTERNAL -H ldapi:/// -b cn=config '(&(olcRootDN=*)(olcSuffix=*))' dn | grep -i '^dn:' | sed -e 's/^dn:\s*//'`;
+DBDN=`sudo ldapsearch -Q -LLL -Y EXTERNAL -H ldapi:/// -b cn=config '(&(olcRootDN=*)(olcSuffix=*))' dn | grep -i '^dn:' | sed -e 's/^dn:\s*//'`;
 
-ldapadd -Q -Y EXTERNAL -H ldapi:/// -f /etc/ldap/schema/ppolicy.ldif
+sudo ldapadd -Q -Y EXTERNAL -H ldapi:/// -f /etc/ldap/schema/ppolicy.ldif
 
-ps aux
+sudo service slapd restart
 
-service slapd restart
-
-ldapmodify -Q -Y EXTERNAL -H ldapi:/// << EOF
+sudo ldapmodify -Q -Y EXTERNAL -H ldapi:/// << EOF
 dn: $DBDN
 changetype: modify
 replace: olcSuffix
@@ -92,9 +90,9 @@ add: olcModuleLoad
 olcModuleLoad: dds
 EOF
 
-service slapd restart
+sudo service slapd restart
 
-ldapadd -Q -Y EXTERNAL -H ldapi:/// << EOF
+sudo ldapadd -Q -Y EXTERNAL -H ldapi:/// << EOF
 dn: olcOverlay=sssvlv,$DBDN
 objectClass: olcOverlayConfig
 objectClass: olcSssVlvConfig
@@ -118,16 +116,16 @@ objectClass: olcDdsConfig
 olcOverlay: dds
 EOF
 
-service slapd restart
+sudo service slapd restart
 
-ldapmodify -Q -Y EXTERNAL -H ldapi:/// << EOF
+sudo ldapmodify -Q -Y EXTERNAL -H ldapi:/// << EOF
 dn: $DBDN
 changetype: modify
 add: olcDbIndex
 olcDbIndex: entryExpireTimestamp eq
 EOF
 
-service slapd restart
+sudo service slapd restart
 
 ldapadd -H ldapi:/// -D cn=Manager,dc=my-domain,dc=com -w secret <<EOF
 dn: dc=my-domain,dc=com

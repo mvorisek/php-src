@@ -6,19 +6,14 @@ runs:
       run: |
         set -x
 
-        export DEBIAN_FRONTEND=noninteractive
-        apt-get update -y
-        apt-get install -y \
-          build-essential \
-          autoconf \
-          unzip \
+        sudo apt-get update
+        sudo apt-get install \
           bison \
           re2c \
           locales \
           ldap-utils \
           openssl \
           slapd \
-          mysql-client \
           language-pack-de \
           libgmp-dev \
           libicu-dev \
@@ -29,7 +24,6 @@ runs:
           libsasl2-dev \
           libxpm-dev \
           libzip-dev \
-          libbz2-dev \
           libsqlite3-dev \
           libwebp-dev \
           libonig-dev \
@@ -76,4 +70,4 @@ runs:
         rm /opt/oracle/instantclient/sdk/include/ldap.h
         # fix debug build warning: zend_signal: handler was replaced for signal (2) after startup
         echo DISABLE_INTERRUPT=on > /opt/oracle/instantclient/network/admin/sqlnet.ora
-        sh -c 'echo /opt/oracle/instantclient >/etc/ld.so.conf.d/oracle-instantclient.conf && ldconfig'
+        sudo sh -c 'echo /opt/oracle/instantclient >/etc/ld.so.conf.d/oracle-instantclient.conf && ldconfig'

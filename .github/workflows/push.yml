@@ -10,7 +10,11 @@ on:
       - CONTRIBUTING.md
       - CODING_STANDARDS.md
     branches:
-      - '**'
+      - PHP-7.4
+      - PHP-8.0
+      - PHP-8.1
+      - PHP-8.2
+      - master
   pull_request:
     branches:
       - '**'
@@ -28,30 +32,13 @@ jobs:
             zts: true
     name: "LINUX_X64_${{ matrix.debug && 'DEBUG' || 'RELEASE' }}_${{ matrix.zts && 'ZTS' || 'NTS' }}"
     runs-on: ubuntu-20.04
-    container:
-      image: ubuntu:focal
-    services:
-      mysql:
-        image: mysql:8
-        options: -e MYSQL_ROOT_PASSWORD=root -e MYSQL_DATABASE=test --entrypoint sh mysql:8 -c "exec docker-entrypoint.sh mysqld --default-authentication-plugin=mysql_native_password"
-      postgres:
-        image: postgres:12-alpine
-        env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: test
-      mssql:
-        image: mcr.microsoft.com/mssql/server:2019-latest
-        env:
-          ACCEPT_EULA: Y
-          SA_PASSWORD: '<YourStrong@Passw0rd>'
-      oracle:
-        image: gvenzl/oracle-xe:21-slim-faststart
-        env:
-          ORACLE_PASSWORD: pass
     steps:
       - name: git checkout
         uses: actions/checkout@v2
+      - name: Create MSSQL container
+        uses: ./.github/actions/setup-mssql
+      - name: Create Oracle container
+        uses: ./.github/actions/setup-oracle
       - name: apt
         uses: ./.github/actions/apt-x64
       - name: ./configure
