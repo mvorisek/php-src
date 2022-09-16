@@ -15,6 +15,10 @@ runs:
         sed -i 's/--exec $SLAPD 2/--name slapd 2/' /etc/init.d/slapd
 
         cat /etc/init.d/slapd
+        ls -lah /var/run/slapd/slapd.pid
+
+        ps aux
+        start-stop-daemon --stop --oknodo --retry TERM/10 --pidfile /var/run/slapd/slapd.pid --name slap
 
         ps aux
         service slapd restart
