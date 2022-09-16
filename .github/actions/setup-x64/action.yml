@@ -18,7 +18,7 @@ runs:
         ls -lah /var/run/slapd/slapd.pid
 
         ps aux
-        start-stop-daemon --stop --oknodo --retry TERM/10 --pidfile /var/run/slapd/slapd.pid --name slap
+        start-stop-daemon --stop --oknodo --retry TERM/10 --pidfile /var/run/slapd/slapd.pid --name slapd
 
         ps aux
         service slapd restart
