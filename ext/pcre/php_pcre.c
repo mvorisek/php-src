@@ -35,6 +35,8 @@
 
 #define PREG_JIT                    (1<<3)
 
+#define PREG_JIT_ATTEMPTED          (1<<4)
+
 #define PCRE_CACHE_SIZE 4096
 
 #ifdef HAVE_PCRE_JIT_SUPPORT
@@ -591,7 +593,12 @@ PHPAPI pcre_cache_entry* pcre_get_compiled_regex_cache_ex(zend_string *regex, bo
 	char				*p, *pp;
 	char				*pattern;
 	size_t				 pattern_len;
+#ifdef HAVE_PCRE_JIT_SUPPORT
+    bool				 jit_enabled = PCRE_G(jit);
+	uint32_t			 poptions = jit_enabled ? PREG_JIT_ATTEMPTED : 0;
+#else
 	uint32_t			 poptions = 0;
+#endif
 	const uint8_t       *tables = NULL;
 	zval                *zv;
 	pcre_cache_entry	 new_entry;
@@ -611,10 +618,19 @@ PHPAPI pcre_cache_entry* pcre_get_compiled_regex_cache_ex(zend_string *regex, bo
 	   back the compiled pattern, otherwise go on and compile it. */
 	zv = zend_hash_find(&PCRE_G(pcre_cache), key);
 	if (zv) {
-		if (key != regex) {
-			zend_string_release_ex(key, 0);
+		pcre_cache_entry *pce = (pcre_cache_entry*)Z_PTR_P(zv);
+#ifdef HAVE_PCRE_JIT_SUPPORT
+		if ((bool)(pce->preg_options & PREG_JIT_ATTEMPTED) == jit_enabled) {
+#endif
+			if (key != regex) {
+				zend_string_release_ex(key, 0);
+			}
+			return pce;
+#ifdef HAVE_PCRE_JIT_SUPPORT
+		} else {
+			zend_hash_del(&PCRE_G(pcre_cache), key);
 		}
-		return (pcre_cache_entry*)Z_PTR_P(zv);
+#endif
 	}
 
 	p = ZSTR_VAL(regex);
@@ -786,7 +802,7 @@ PHPAPI pcre_cache_entry* pcre_get_compiled_regex_cache_ex(zend_string *regex, bo
 	}
 
 #ifdef HAVE_PCRE_JIT_SUPPORT
-	if (PCRE_G(jit)) {
+	if (jit_enabled) {
 		/* Enable PCRE JIT compiler */
 		rc = pcre2_jit_compile(re, PCRE2_JIT_COMPLETE);
 		if (EXPECTED(rc >= 0)) {
