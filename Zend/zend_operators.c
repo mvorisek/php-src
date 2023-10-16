@@ -3148,10 +3148,10 @@ ZEND_API bool ZEND_FASTCALL zend_str_is_utf8_pure_ascii(const char *str, size_t 
 	unsigned char *end = p + length;
 
 #ifdef HAVE_BLOCKCONV
-	__m128i blconv_80 = _mm_set1_epi8(0x80), blconv_operand, blconv_mingle;
+	__m128i blconv_80 = _mm_set1_epi8(0x80), blconv_operand, blconv_mask;
 	while (p + BLOCKCONV_STRIDE <= end) {
 		blconv_operand = _mm_loadu_si128((__m128i*)(p));
-		blconv_mingle = _mm_cmpeq_epi8(_mm_max_epu8(blconv_operand, blconv_80), blconv_operand);
+		blconv_mask = _mm_cmpeq_epi8(_mm_max_epu8(blconv_operand, blconv_80), blconv_operand);
 		if (BLOCKCONV_FOUND()) {
 			return false;
 		}
