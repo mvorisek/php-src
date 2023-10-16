@@ -1,25 +1,8 @@
 name: Push
 on:
   push:
-    paths-ignore:
-      - docs/*
-      - NEWS
-      - UPGRADING
-      - UPGRADING.INTERNALS
-      - '**/README.*'
-      - CONTRIBUTING.md
-      - CODING_STANDARDS.md
-      - .cirrus.yml
-      - .travis.yml
-      - travis/*
-      - .circleci/*
     branches:
-      - PHP-7.4
-      - PHP-8.0
-      - PHP-8.1
-      - PHP-8.2
-      - PHP-8.3
-      - master
+      - '**'
   pull_request:
     paths-ignore:
       - docs/*
