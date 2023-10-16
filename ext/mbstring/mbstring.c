@@ -2920,6 +2920,11 @@ PHP_FUNCTION(mb_strtoupper)
 		RETURN_THROWS();
 	}
 
+	// optimize performance for UTF-8 encoding and input string consisting of lower/7-bit ASCII characters only
+	if (enc == &mbfl_encoding_utf8 && zend_str_is_utf8_pure_ascii(ZSTR_VAL(str), ZSTR_LEN(str))) {
+		RETURN_STR(zend_string_toupper(str));
+	}
+
 	RETURN_STR(mbstring_convert_case(PHP_UNICODE_CASE_UPPER, ZSTR_VAL(str), ZSTR_LEN(str), enc));
 }
 
@@ -2936,6 +2941,11 @@ PHP_FUNCTION(mb_strtolower)
 	const mbfl_encoding *enc = php_mb_get_encoding(from_encoding, 2);
 	if (!enc) {
 		RETURN_THROWS();
+	}
+
+	// optimize performance for UTF-8 encoding and input string consisting of lower/7-bit ASCII characters only
+	if (enc == &mbfl_encoding_utf8 && zend_str_is_utf8_pure_ascii(ZSTR_VAL(str), ZSTR_LEN(str))) {
+		RETURN_STR(zend_string_tolower(str));
 	}
 
 	RETURN_STR(mbstring_convert_case(PHP_UNICODE_CASE_LOWER, ZSTR_VAL(str), ZSTR_LEN(str), enc));

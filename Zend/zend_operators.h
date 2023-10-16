@@ -452,6 +452,7 @@ ZEND_API char*        ZEND_FASTCALL zend_str_tolower_dup_ex(const char *source, 
 ZEND_API char*        ZEND_FASTCALL zend_str_toupper_dup_ex(const char *source, size_t length);
 ZEND_API zend_string* ZEND_FASTCALL zend_string_tolower_ex(zend_string *str, bool persistent);
 ZEND_API zend_string* ZEND_FASTCALL zend_string_toupper_ex(zend_string *str, bool persistent);
+ZEND_API bool         ZEND_FASTCALL zend_str_is_utf8_pure_ascii(const char *str, size_t length);
 
 static zend_always_inline zend_string* zend_string_tolower(zend_string *str) {
 	return zend_string_tolower_ex(str, false);
