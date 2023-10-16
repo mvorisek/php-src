@@ -178,7 +178,6 @@ jobs:
         run: .github/scripts/windows/test.bat
   BENCHMARKING:
     name: BENCHMARKING
-    if: github.repository_owner == 'php' || github.event_name == 'pull_request'
     runs-on: ubuntu-22.04
     steps:
       - name: git checkout
@@ -248,22 +247,6 @@ jobs:
           path: benchmark/repos/data
       - name: Benchmark
         run: php benchmark/benchmark.php true
-      - name: Store result
-        if: github.event_name == 'push'
-        run: |
-          set -x
-          cd benchmark/repos/data
-          git pull --autostash
-          if [ -e ".git/MERGE_HEAD" ]; then
-            echo "Merging, can't proceed"
-            exit 1
-          fi
-          git add .
-          if git diff --cached --quiet; then
-            exit 0
-          fi
-          git commit -m "Add result for ${{ github.repository }}@${{ github.sha }}"
-          git push
       - name: Show diff
         if: github.event_name == 'pull_request'
         run: |-
