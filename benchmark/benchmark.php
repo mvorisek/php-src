@@ -22,11 +22,11 @@ function main() {
         $data['branch'] = $branch;
     }
     $data['Zend/bench.php'] = runBench(false);
-    $data['Zend/bench.php JIT'] = runBench(true);
+    // $data['Zend/bench.php JIT'] = runBench(true);
     $data['Symfony Demo 2.2.3'] = runSymfonyDemo(false);
-    $data['Symfony Demo 2.2.3 JIT'] = runSymfonyDemo(true);
+    // $data['Symfony Demo 2.2.3 JIT'] = runSymfonyDemo(true);
     $data['Wordpress 6.2'] = runWordpress(false);
-    $data['Wordpress 6.2 JIT'] = runWordpress(true);
+    // $data['Wordpress 6.2 JIT'] = runWordpress(true);
     $result = json_encode($data, JSON_PRETTY_PRINT) . "\n";
 
     fwrite(STDOUT, $result);
@@ -64,7 +64,7 @@ function runSymfonyDemo(bool $jit): array {
     runPhpCommand([$dir . '/bin/console', 'cache:clear']);
     runPhpCommand([$dir . '/bin/console', 'cache:warmup']);
 
-    return runValgrindPhpCgiCommand('symfony-demo', [$dir . '/public/index.php'], cwd: $dir, jit: $jit, repeat: 100);
+    return runValgrindPhpCgiCommand('symfony-demo', [$dir . '/public/index.php'], cwd: $dir, jit: $jit, repeat: 10);
 }
 
 function runWordpress(bool $jit): array {
@@ -88,7 +88,7 @@ function runWordpress(bool $jit): array {
     // Warmup
     runPhpCommand([$dir . '/index.php'], $dir);
 
-    return runValgrindPhpCgiCommand('wordpress', [$dir . '/index.php'], cwd: $dir, jit: $jit, repeat: 100);
+    return runValgrindPhpCgiCommand('wordpress', [$dir . '/index.php'], cwd: $dir, jit: $jit, repeat: 10);
 }
 
 function runPhpCommand(array $args, ?string $cwd = null): ProcessResult {
@@ -148,17 +148,8 @@ function runValgrindPhpCgiCommand(
     uasort($metricsForMedianArr, fn ($a, $b) => $a['Ir'] <=> $b['Ir']);
     $medianRunIndex = array_keys($metricsForMedianArr)[max(0, floor((count($metricsForMedianArr) - 3 /* -1 for count to index, -1 for first slow run due compliation, -1 for second run which is a little slower too */) / 2.0))];
 
-    // remove non-first-non-median profiles from artifacts
-    foreach (range(0, $repeat - 1) as $k) {
-        $profileOutSpecific = $profileOut . '.' . $k;
-
-        if ($k !== 0 && $k !== $medianRunIndex) {
-            unlink($profileOutSpecific);
-        }
-    }
-
     // annotate profiles for artifacts
-    foreach (['startup', 0, $medianRunIndex, 'shutdown'] as $k) {
+    foreach (['startup', ...range(0, $repeat - 1), 'shutdown'] as $k) {
         $profileOutSpecific = $profileOut . '.' . $k;
 
         runCommand([
