@@ -157,6 +157,8 @@ function runValgrindPhpCgiCommand(
             '--threshold=100',
             '--auto=yes',
             '--show-percs=no',
+            '--tree=both',
+            '--inclusive=yes',
             $profileOutSpecific,
             new UnescapedArg('>'),
             "$profileOutSpecific.txt",
