@@ -31,7 +31,8 @@ jobs:
             libgmp-dev \
             libonig-dev \
             re2c \
-            valgrind
+            valgrind \
+            debuginfod
       - name: ccache
         uses: ./.github/actions/ccache
         with:
@@ -68,7 +69,9 @@ jobs:
           ssh-key: ${{ secrets.BENCHMARKING_DATA_DEPLOY_KEY }}
           path: benchmark/repos/data
       - name: Benchmark
-        run: php benchmark/benchmark.php true
+        run: |
+          export DEBUGINFOD_URLS="https://debuginfod.ubuntu.com"
+          php benchmark/benchmark.php true
       - name: Show diff
         if: github.event_name == 'pull_request'
         run: |-
