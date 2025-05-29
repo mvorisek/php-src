@@ -27,19 +27,19 @@ object(Test)#1 (1) {
   ["prop"]=>
   string(2) "42"
   ["val"]=>
-  uninitialized(int)
+  unset(int)
 }
 int(42)
 object(Test)#1 (1) {
   ["prop"]=>
   &int(42)
   ["val"]=>
-  uninitialized(int)
+  unset(int)
 }
 object(Test)#1 (1) {
   ["prop"]=>
   &string(1) "x"
   ["val"]=>
-  uninitialized(int)
+  unset(int)
 }
 string(1) "x"

@@ -29,5 +29,5 @@ var_dump($c);
 Cannot modify private(set) property C::$a from scope D
 object(D)#%d (0) {
   ["a"]=>
-  uninitialized(int)
+  unset(int)
 }

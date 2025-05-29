@@ -32,7 +32,7 @@ object(Foo)#1 (%d) {
 }
 object(Foo)#3 (%d) {
   ["bar"]=>
-  uninitialized(stdClass)
+  unset(stdClass)
 }
 object(Foo)#1 (%d) {
   ["bar"]=>

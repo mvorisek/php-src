@@ -57,9 +57,9 @@ object(C)#%d (2) {
 }
 object(C)#%d (0) {
   ["b"]=>
-  uninitialized(int)
+  unset(int)
   ["c"]=>
-  uninitialized(int)
+  unset(int)
 }
 # Proxy:
 object(C)#%d (2) {
@@ -72,7 +72,7 @@ object(C)#%d (2) {
 }
 object(C)#%d (0) {
   ["b"]=>
-  uninitialized(int)
+  unset(int)
   ["c"]=>
-  uninitialized(int)
+  unset(int)
 }

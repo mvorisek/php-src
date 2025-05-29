@@ -20,6 +20,6 @@ var_dump($test->val);
 --EXPECT--
 object(Test)#1 (0) {
   ["val"]=>
-  uninitialized(int)
+  unset(int)
 }
 int(42)

@@ -52,7 +52,7 @@ lazy proxy object(Test)#%d (1) {
   ["instance"]=>
   object(Test)#%d (1) {
     ["a"]=>
-    uninitialized(I)
+    unset(I)
     ["b"]=>
     object(B)#%d (0) {
     }

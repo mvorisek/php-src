@@ -30,13 +30,13 @@ object(Test)#1 (1) {
   ["prop"]=>
   &string(1) "x"
   ["val"]=>
-  uninitialized(int)
+  unset(int)
 }
 Value of type string returned from Test::__get() must be compatible with unset property Test::$val of type int
 object(Test)#1 (1) {
   ["prop"]=>
   &string(1) "x"
   ["val"]=>
-  uninitialized(int)
+  unset(int)
 }
 string(1) "y"
