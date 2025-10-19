@@ -40,4 +40,4 @@ jobs:
           cd ext/opcache/jit/ir
           rm -r .git .github/workflows bench examples tests tools README.md TODO ir.g ir_cpuinfo.c ir_emit_c.c ir_emit_llvm.c ir_load.c ir_load_llvm.c ir_main.c ir_mem2ssa.c
           git restore README
-          git add . -N && git diff -a --exit-code .
+          git add . -N && git diff --cached -a --exit-code . && git diff -a --exit-code .
