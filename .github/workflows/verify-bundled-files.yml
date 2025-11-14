@@ -6,6 +6,7 @@ on:
       - '.github/scripts/download-bundled/**'
       - 'Zend/asm/**'
       - 'Zend/zend_simd.h'
+      - 'ext/date/lib/**'
       - 'ext/opcache/jit/ir/**'
       - 'ext/hash/xxhash/**'
       - 'ext/pcre/pcre2lib/**'
@@ -40,6 +41,9 @@ jobs:
             xsse:
               - '.github/scripts/download-bundled/xsse.*'
               - 'Zend/zend_simd.h'
+            timelib:
+              - '.github/scripts/download-bundled/timelib.*'
+              - 'ext/date/lib/**'
             'jit-ir':
               - '.github/scripts/download-bundled/jit-ir.*'
               - 'ext/opcache/jit/ir/**'
@@ -70,6 +74,15 @@ jobs:
           echo "::endgroup::"
           echo "::group::Verify files"
           .github/scripts/test-directory-unchanged.sh 'Zend/zend_simd.h'
+          echo "::endgroup::"
+      - name: timelib
+        if: ${{ !cancelled() && (steps.changes.outputs.timelib == 'true' || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch') }}
+        run: |
+          echo "::group::Download"
+          .github/scripts/download-bundled/timelib.sh
+          echo "::endgroup::"
+          echo "::group::Verify files"
+          .github/scripts/test-directory-unchanged.sh 'ext/date/lib'
           echo "::endgroup::"
       - name: 'JIT IR'
         if: ${{ !cancelled() && (steps.changes.outputs.jit-ir == 'true' || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch') }}
