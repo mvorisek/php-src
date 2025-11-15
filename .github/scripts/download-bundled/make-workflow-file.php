@@ -9,6 +9,7 @@ $bundles = [
     new Bundle('boost.context', ['Zend/asm']),
     new Bundle('XSSE', ['Zend/zend_simd.h']),
     new Bundle('timelib', ['ext/date/lib']),
+    new Bundle('file (libmagic)', ['ext/fileinfo/libmagic']),
     new Bundle('xxHash', ['ext/hash/xxhash']),
     new Bundle('Unicode Character Database', ['ext/mbstring']),
     new Bundle('PCRE2', ['ext/pcre/pcre2lib']),
@@ -27,7 +28,7 @@ class Bundle
 
     public function getNameForPath(): string
     {
-        return preg_replace('~\W+~', '-', strtolower($this->name));
+        return trim(preg_replace('~\W+~', '-', strtolower($this->name)), '-');
     }
 }
 
