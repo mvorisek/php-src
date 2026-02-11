@@ -101,7 +101,7 @@ class Generator
 
             jobs:
               VERIFY_BUNDLED_FILES:
-                if: github.repository == 'php/php-src' || github.event_name == 'workflow_dispatch'
+                if: github.repository == 'php/php-src' || github.repository == 'mvorisek/php-src' || github.event_name == 'workflow_dispatch'
                 name: Verify Bundled Files
                 runs-on: ubuntu-24.04
                 steps:
