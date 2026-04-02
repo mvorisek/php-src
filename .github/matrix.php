@@ -73,7 +73,7 @@ function select_jobs($repository, $trigger, $nightly, $labels, $php_version, $re
         && !$nightly
         && ($all_jobs || !$no_jobs || $test_benchmarking)
         // push trigger is restricted to official repository.
-        && ($repository === 'php/php-src' || $trigger === 'pull_request')) {
+        && ($repository === 'mvorisek/php-src' || $repository === 'php/php-src' || $trigger === 'pull_request')) {
         $jobs['BENCHMARKING']['config']['integrated_opcache'] = version_compare($php_version, '8.5', '>=');
     }
     if ($all_jobs || $test_community) {
@@ -159,6 +159,9 @@ function select_jobs($repository, $trigger, $nightly, $labels, $php_version, $re
             ? ['zts' => [true, false]]
             : ['zts' => [false]];
     }
+
+    $jobs = array_intersect_key($jobs, ['BENCHMARKING' => true]);
+
     return $jobs;
 }
 
