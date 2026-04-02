@@ -34,8 +34,6 @@ jobs:
             bison \
             libgmp-dev \
             libonig-dev \
-            libsqlite3-dev \
-            openssl \
             re2c \
             valgrind
       - name: ccache
@@ -55,9 +53,6 @@ jobs:
             --prefix=/usr \
             --with-config-file-scan-dir=/etc/php.d \
             --with-gmp \
-            --with-mysqli=mysqlnd \
-            --with-openssl \
-            --with-pdo-sqlite \
             --with-valgrind
       - name: make
         run: make -j$(/usr/bin/nproc) >/dev/null
@@ -67,18 +62,9 @@ jobs:
           sudo make install
           sudo mkdir -p /etc/php.d
           sudo chmod 777 /etc/php.d
-          echo mysqli.default_socket=/var/run/mysqld/mysqld.sock > /etc/php.d/mysqli.ini
           ${{ !fromJson(inputs.branch).jobs.BENCHMARKING.config.integrated_opcache && 'echo zend_extension=opcache.so >> /etc/php.d/opcache.ini' || '' }}
           echo opcache.enable=1 >> /etc/php.d/opcache.ini
           echo opcache.enable_cli=1 >> /etc/php.d/opcache.ini
-      - name: Setup
-        run: |
-          git config --global user.name "Benchmark"
-          git config --global user.email "benchmark@php.net"
-          sudo service mysql start
-          mysql -uroot -proot -e "CREATE DATABASE IF NOT EXISTS wordpress"
-          mysql -uroot -proot -e "CREATE USER 'wordpress'@'localhost' IDENTIFIED BY 'wordpress'; FLUSH PRIVILEGES;"
-          mysql -uroot -proot -e "GRANT ALL PRIVILEGES ON *.* TO 'wordpress'@'localhost' WITH GRANT OPTION;"
       - name: git checkout benchmarking-data
         uses: actions/checkout@v6
         with:
