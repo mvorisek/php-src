@@ -24,16 +24,8 @@ function main() {
         $data['branch'] = $branch;
     }
 
-    $data['Zend/bench.php'] = runBench(false);
-    $data['Zend/bench.php JIT'] = runBench(true);
-
     checkExtensions(['mbstring']);
     $data['Symfony Demo 2.2.3'] = runSymfonyDemo(false);
-    $data['Symfony Demo 2.2.3 JIT'] = runSymfonyDemo(true);
-
-    checkExtensions(['mbstring', 'sockets', 'mysqli', 'openssl']);
-    $data['Wordpress 6.2'] = runWordpress(false);
-    $data['Wordpress 6.2 JIT'] = runWordpress(true);
 
     $result = json_encode($data, JSON_PRETTY_PRINT) . "\n";
 
@@ -79,7 +71,7 @@ function runSymfonyDemo(bool $jit): array {
     cloneRepo($dir, 'https://github.com/php/benchmarking-symfony-demo-2.2.3.git');
     runPhpCommand([$dir . '/bin/console', 'cache:clear']);
     runPhpCommand([$dir . '/bin/console', 'cache:warmup']);
-    return runValgrindPhpCgiCommand('symfony-demo', [$dir . '/public/index.php'], cwd: $dir, jit: $jit, repeat: 100);
+    return runValgrindPhpCgiCommand('symfony-demo', [$dir . '/public/index.php'], cwd: $dir, jit: $jit, repeat: 10);
 }
 
 function runWordpress(bool $jit): array {
