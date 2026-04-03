@@ -156,6 +156,8 @@ function runValgrindPhpCgiCommand(
         }
     }
 
+    echo preg_replace_callback('~\d+~', static fn ($matches) => number_format((int) $matches[0], 0, null, '_'), print_r(array_intersect_key($totalsAll, array_fill_keys($saveToArtifactPhases, true)), true));
+
     // mimic original logged "instructions" meaning:
     // - the startup was not counted (only if repeats > 1)
     // - repeats were counted without warmup, ie. only the last 50% repeats were counted
@@ -168,6 +170,8 @@ function runValgrindPhpCgiCommand(
     }
     $instructions = gmp_strval(gmp_div_q($warmTotals['Ir'], intdiv($repeat + 1, 2)));
     $res = ['instructions' => $instructions];
+
+    echo preg_replace_callback('~\d+~', static fn ($matches) => number_format((int) $matches[0], 0, null, '_'), print_r($res, true));
 
     return $res;
 }
