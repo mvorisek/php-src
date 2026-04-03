@@ -7,14 +7,14 @@ readonly class ProcessResult {
     ) {}
 }
 
-function runCommand(array $args, ?string $cwd = null, bool $printCommand = true): ProcessResult {
+function runCommand(array $args, ?string $cwd = null, bool $printCommand = true, ?array $envVars = null): ProcessResult {
     $cmd = implode(' ', array_map('escapeshellarg', $args));
     $pipes = null;
     $descriptorSpec = [0 => ['pipe', 'r'], 1 => ['pipe', 'w'], 2 => ['pipe', 'w']];
     if ($printCommand) {
         fwrite(STDOUT, "> $cmd\n");
     }
-    $processHandle = proc_open($cmd, $descriptorSpec, $pipes, $cwd ?? getcwd(), null);
+    $processHandle = proc_open($cmd, $descriptorSpec, $pipes, $cwd ?? getcwd(), $envVars);
 
     $stdin = $pipes[0];
     $stdout = $pipes[1];

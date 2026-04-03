@@ -136,7 +136,7 @@ function runValgrindPhpCgiCommand(
         '-d opcache.jit_buffer_size=128M',
         '-d opcache.validate_timestamps=0',
         ...$args,
-    ]);
+    ], null, true, array_merge(getenv(), ['BENCHMARK_DUMP_SEPARATE_PROFILES' => '1']));
 
     $saveToArtifactPhases = array_unique([
         'startup',
