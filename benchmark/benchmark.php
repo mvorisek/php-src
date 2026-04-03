@@ -120,7 +120,7 @@ function runValgrindPhpCgiCommand(
 
     $profileOut = __DIR__ . "/profiles/callgrind.out.$name";
     if ($jit) {
-        $profileOut .= '.jit';
+        $profileOut .= '-jit';
     }
 
     $process = runCommand([
@@ -138,12 +138,43 @@ function runValgrindPhpCgiCommand(
         '-d opcache.validate_timestamps=0',
         ...$args,
     ]);
-    $totals = extractTotalsFromCallgrindFile($profileOut);
-    $instructions = $totals['Ir'];
-    if ($repeat > 1) {
-        $instructions = gmp_strval(gmp_div_q($instructions, $repeat));
+
+    $saveToArtifactPhases = array_unique([
+        'startup',
+        ...range(0, min($repeat - 1, 2)), // first 3 runs
+        ...range(max(0, $repeat - 2), $repeat - 1), // last 2 runs
+        'shutdown',
+    ]);
+
+    // collect metrics for startup, each benchmark run and shutdown
+    $totalsAll = [];
+    foreach (['startup' => '.1', ...array_map(static fn ($v) => '.' . $v, range(2, $repeat + 1)), 'shutdown' => ''] as $phase => $profileOutSuffix) {
+        $profileOutSpecific = $profileOut . '.' . $phase;
+        if (!rename($profileOut . $profileOutSuffix, $profileOutSpecific)) {
+            throw new \Exception('Expected callgrind file "' . $profileOutSpecific . '" does not exist');
+        }
+
+        $totalsAll[$phase] = extractTotalsFromCallgrindFile($profileOutSpecific);
+
+        if (!in_array($phase, $saveToArtifactPhases, true)) {
+            unlink($profileOutSpecific);
+        }
     }
-    return ['instructions' => $instructions];
+
+    // mimic original logged "instructions" meaning:
+    // - the startup was not counted (only if repeats > 1)
+    // - repeats were counted without warmup, ie. only the last 50% repeats were counted
+    // - the shutdown was never counted
+    $warmTotals = array_map(static fn () => '0', array_first($totalsAll));
+    foreach ($repeat === 1 ? ['startup', 0] : range(intdiv($repeat, 2), $repeat - 1) as $phase) {
+        foreach ($totalsAll[$phase] as $kEvent => $v) {
+            $warmTotals[$kEvent] = gmp_strval(gmp_add($warmTotals[$kEvent], $v));
+        }
+    }
+    $instructions = gmp_strval(gmp_div_q($warmTotals['Ir'], intdiv($repeat + 1, 2)));
+    $res = ['instructions' => $instructions];
+
+    return $res;
 }
 
 /**
