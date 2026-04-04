@@ -85,7 +85,7 @@ jobs:
       - name: Benchmark
         run: |
           export DEBUGINFOD_URLS="https://debuginfod.ubuntu.com"
-          php benchmark/benchmark.php true
+          php -d memory_limit=10G benchmark/benchmark.php true
       - name: Show diff
         if: github.event_name == 'pull_request'
         run: |-

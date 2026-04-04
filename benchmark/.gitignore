@@ -1,2 +1,4 @@
 /profiles
 /repos
+/mvorisek-analyser/*
+!/mvorisek-analyser/*.php
