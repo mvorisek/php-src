@@ -33,8 +33,7 @@ jobs:
             libsqlite3-dev \
             openssl \
             re2c \
-            valgrind \
-            debuginfod
+            valgrind
       - name: ccache
         uses: ./.github/actions/ccache
         with:
@@ -83,9 +82,7 @@ jobs:
           ssh-key: ${{ secrets.BENCHMARKING_DATA_DEPLOY_KEY }}
           path: benchmark/repos/data
       - name: Benchmark
-        run: |
-          export DEBUGINFOD_URLS="https://debuginfod.ubuntu.com"
-          php -d memory_limit=10G benchmark/benchmark.php true
+        run: php -d memory_limit=10G benchmark/benchmark.php true
       - name: Show diff
         if: github.event_name == 'pull_request'
         run: |-
