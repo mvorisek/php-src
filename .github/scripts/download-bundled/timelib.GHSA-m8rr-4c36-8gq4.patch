@@ -1,0 +1,61 @@
+diff --git a/ext/date/lib/parse_date.re b/ext/date/lib/parse_date.re
+index ffb3e8e3591..f4a39275324 100644
+--- a/ext/date/lib/parse_date.re
++++ b/ext/date/lib/parse_date.re
+@@ -516,7 +516,7 @@ static timelib_sll timelib_get_nr(const char **ptr, int max_length)
+ 
+ static void timelib_skip_day_suffix(const char **ptr)
+ {
+-	if (isspace(**ptr)) {
++	if (isspace((unsigned char)**ptr)) {
+ 		return;
+ 	}
+ 	if (!timelib_strncasecmp(*ptr, "nd", 2) || !timelib_strncasecmp(*ptr, "rd", 2) ||!timelib_strncasecmp(*ptr, "st", 2) || !timelib_strncasecmp(*ptr, "th", 2)) {
+@@ -857,7 +857,7 @@ static timelib_long timelib_parse_tz_cor(const char **ptr, int *tz_not_found)
+ 
+ 	*tz_not_found = 1;
+ 
+-	while (isdigit(**ptr) || **ptr == ':') {
++	while (isdigit((unsigned char)**ptr) || **ptr == ':') {
+ 		++*ptr;
+ 	}
+ 	end = *ptr;
+@@ -922,7 +922,7 @@ static timelib_long timelib_parse_tz_minutes(const char **ptr, timelib_time *t)
+ 	}
+ 
+ 	++*ptr;
+-	while (isdigit(**ptr)) {
++	while (isdigit((unsigned char)**ptr)) {
+ 		++*ptr;
+ 	}
+ 
+diff --git a/ext/date/lib/parse_iso_intervals.re b/ext/date/lib/parse_iso_intervals.re
+index 2a394156f98..00942007751 100644
+--- a/ext/date/lib/parse_iso_intervals.re
++++ b/ext/date/lib/parse_iso_intervals.re
+@@ -343,10 +343,10 @@ void timelib_strtointerval(const char *s, size_t len,
+ 	in.errors->error_messages = NULL;
+ 
+ 	if (len > 0) {
+-		while (isspace(*s) && s < e) {
++		while (isspace((unsigned char)*s) && s < e) {
+ 			s++;
+ 		}
+-		while (isspace(*e) && e > s) {
++		while (isspace((unsigned char)*e) && e > s) {
+ 			e--;
+ 		}
+ 	}
+diff --git a/ext/date/lib/timelib.c b/ext/date/lib/timelib.c
+index 6473a2798a8..faf383a5fa1 100644
+--- a/ext/date/lib/timelib.c
++++ b/ext/date/lib/timelib.c
+@@ -126,7 +126,7 @@ void timelib_time_tz_abbr_update(timelib_time* tm, const char* tz_abbr)
+ 	TIMELIB_TIME_FREE(tm->tz_abbr);
+ 	tm->tz_abbr = timelib_strdup(tz_abbr);
+ 	for (i = 0; i < tz_abbr_len; i++) {
+-		tm->tz_abbr[i] = toupper(tz_abbr[i]);
++		tm->tz_abbr[i] = toupper((unsigned char)tz_abbr[i]);
+ 	}
+ }
+ 
