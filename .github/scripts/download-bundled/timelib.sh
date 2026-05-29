@@ -25,3 +25,7 @@ rm -r zones
 rm gettzmapping.php
 rm parse_zoneinfo.c
 rm win_dirent.h
+
+# patch customized files
+rm -r .git
+git apply -v ../../../.github/scripts/download-bundled/timelib.parse_date.patch
